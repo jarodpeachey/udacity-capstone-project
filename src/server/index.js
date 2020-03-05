@@ -1,4 +1,5 @@
 // Dependencies
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
@@ -38,7 +39,7 @@ async function getWeather(request, response) {
 
   await fetch(
     `https://api.darksky.net/forecast/${process.env.DARK_SKY_KEY}/${request.body.lat}, ${request.body.lng}`,
-  ).then((res) => apiResponse = res);
+  ).then((res) => (apiResponse = res));
 
   const jsonResponse = await apiResponse.json();
 
