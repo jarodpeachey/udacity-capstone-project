@@ -1,3 +1,5 @@
+import './styles/main.scss';
+
 /* Global Variables */
 let addEntryButton = document.getElementById('entry-button');
 let nameElement = document.getElementById('name');
@@ -7,10 +9,10 @@ let entrySection = document.getElementById('entry-section');
 let entriesElement = document.getElementById('entries');
 
 // API Key
-const apiKey = '8e5ccdb71fc19dc417aad096b7f8d68c';
+const apiKey = process.env.API_KEY;
 
 // Request URL
-const weatherURL = 'https://api.openweathermap.org/data/2.5/weather';
+const locationURL = 'http://api.geonames.org/postalCodeSearchJSON?username=jarodpeachey';
 
 // Event Listener
 addEntryButton.addEventListener('click', addEntry);
@@ -25,7 +27,7 @@ async function addEntry(e) {
   ) {
     alert('Please fill in all the fields.');
   } else {
-    getWeatherData(zipElement.value, apiKey);
+    getCityLocation(zipElement.value);
   }
 }
 
@@ -33,32 +35,41 @@ async function addEntry(e) {
 let d = new Date();
 let newDate = d.getMonth() + 1 + '/' + d.getDate() + '/' + d.getFullYear();
 
-async function getWeatherData(zipCode, apiKey) {
-  const response = await fetch(`${weatherURL}?zip=${zipCode}&APPID=${apiKey}`);
+async function getCityLocation(zipCode) {
+  let response;
 
-  try {
-    const allData = await response.json();
+  await fetch(
+    `${locationURL}&postalcode=${zipCode}&countryCode=US`,
+  ).then((res) => response = res);
 
-    if (allData.cod == '404') {
-      alert(allData.message);
-    } else {
-      const newData = {
-        date: newDate,
-        temp: allData.main.temp,
-        zip: zipElement.value,
-        feelings: feelingsElement.value,
-        name: nameElement.value,
-      };
+  const jsonResponse = await response.json();
 
-      const postResult = await postData('/add', newData);
+  console.log(jsonResponse);
 
-      const getResult = await getData('/data');
+  const city = jsonResponse.postalCodes[0];
 
-      displayResults(getResult);
-    }
-  } catch (error) {
-    console.log(error);
+  getWeatherData(city);
+}
+
+async function getWeatherData(city) {
+  let response;
+
+  const data = {
+    ...city,
+    key: process.env.DARK_SKY_KEY,
   }
+
+  const serverResponse = postData('/getWeather', data);
+
+  console.log(serverResponse);
+
+  // await fetch(
+  //   `${weatherURL}/${process.env.DARK_SKY_KEY}/${city.lat}, ${city.long}`,
+  // ).then((res) => response = res);
+
+  // const jsonResponse = await response.json();
+
+  // console.log(jsonResponse);
 }
 
 async function postData(url, data) {
