@@ -12,7 +12,8 @@ let entriesElement = document.getElementById('entries');
 const apiKey = process.env.API_KEY;
 
 // Request URL
-const locationURL = 'http://api.geonames.org/postalCodeSearchJSON?username=jarodpeachey';
+const locationURL =
+  'http://api.geonames.org/postalCodeSearchJSON?username=jarodpeachey';
 
 // Event Listener
 addEntryButton.addEventListener('click', addEntry);
@@ -38,9 +39,9 @@ let newDate = d.getMonth() + 1 + '/' + d.getDate() + '/' + d.getFullYear();
 async function getCityLocation(zipCode) {
   let response;
 
-  await fetch(
-    `${locationURL}&postalcode=${zipCode}&countryCode=US`,
-  ).then((res) => response = res);
+  await fetch(`${locationURL}&postalcode=${zipCode}&countryCode=US`).then(
+    (res) => (response = res),
+  );
 
   const jsonResponse = await response.json();
 
@@ -57,19 +58,15 @@ async function getWeatherData(city) {
   const data = {
     ...city,
     key: process.env.DARK_SKY_KEY,
-  }
+  };
 
-  const serverResponse = postData('/getWeather', data);
+  const requestData = await postData('/requestWeather', data);
 
-  console.log(serverResponse);
+  const weatherData = await getData('/getWeather').then(
+    (res) => (weatherData = res),
+  );
 
-  // await fetch(
-  //   `${weatherURL}/${process.env.DARK_SKY_KEY}/${city.lat}, ${city.long}`,
-  // ).then((res) => response = res);
-
-  // const jsonResponse = await response.json();
-
-  // console.log(jsonResponse);
+  console.log(weatherData);
 }
 
 async function postData(url, data) {

@@ -8,6 +8,7 @@ const fetch = require('node-fetch');
 // Empty data object
 projectData = {
   entries: [],
+  currentWeatherObject: {},
 };
 
 // Start up an instance of app
@@ -30,11 +31,12 @@ const server = app.listen(port, () => {
 });
 
 // Set up HTTP request routes
-app.post('/getWeather', getWeather);
-app.get('/data', sendData);
+app.post('/requestWeather', requestWeather);
+app.get('/getWeather', getWeather);
 app.post('/add', postData);
+app.get('/data', sendData);
 
-async function getWeather(request, response) {
+async function requestWeather(request, response) {
   let apiResponse;
 
   await fetch(
@@ -43,7 +45,13 @@ async function getWeather(request, response) {
 
   const jsonResponse = await apiResponse.json();
 
-  console.log(jsonResponse);
+  projectData.currentWeatherObject = jsonResponse;
+
+  response.send({ success: true });
+}
+
+function getWeather(request, response) {
+  response.send(projectData.currentWeatherObject);
 }
 
 // Set up functions for HTTP requests
