@@ -2,7 +2,6 @@ html,
 body {
   margin: 0;
   padding: 0;
-  background: linear-gradient(rgb(17, 214, 221), rgb(17, 231, 178));
 }
 
 * {
@@ -40,6 +39,50 @@ body {
   }
 }
 
+#header {
+  z-index: 99999999999;
+  background: #db5323;
+  backdrop-filter: blur(6px);
+  height: 58px;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  left: 0;
+  .container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+    min-width: 85% !important;
+  }
+  .site-title {
+    font-size: 36px !important;
+    color: white !important;
+    margin: 0 !important;
+  }
+  .menu {
+    list-style: none;
+    display: block;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    .menu-item {
+      width: auto;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      a {
+        font-size: 16px;
+        color: white;
+        font-weight: 500;
+        text-decoration: none;
+        padding: 8px;
+        margin: 0;
+      }
+    }
+  }
+}
+
 #hero {
   height: 70vh;
   display: flex;
@@ -47,17 +90,43 @@ body {
   align-items: center;
   justify-content: center;
   text-align: center;
+  background-image: url('../images/travel.jpg');
+  background-position: left;
+  background-attachment: fixed;
+  background-origin: unset;
+  background-position-x: calc(-5vw);
+  @media (min-width: 576px) {
+    background-position-x: calc(5vw);
+  }
+  @media (min-width: 769px) {
+    background-position-x: calc(20vw);
+  }
+  // background-position-y: calc(-25vw);
+  // background-size: 350%;
 }
 
 .hero-title {
   color: white;
-  font-size: 48px;
+  font-size: 84px;
   font-family: 'Oswald', sans-serif;
+  text-align: left;
+  text-shadow: 3px 3px #e4d12c;
+  margin-bottom: 16px;
 }
 
 .hero-subtitle {
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 18px;
+  // color: white;
+  font-size: 22px;
+  text-align: left;
+  font-weight: bold;
+  // backdrop-filter: blur(6px);
+  padding: 16px;
+  background: #e4d12c;
+  position: relative;
+  background-color: #e4d12c;
+  color: white;
+  max-width: 650px;
+  line-height: 1.5em;
 }
 
 section#main {
@@ -131,7 +200,7 @@ button {
 
 button:hover {
   background: rgb(51, 228, 235);
-  transition-duration: .25s;
+  transition-duration: 0.25s;
 }
 
 #entry-section {

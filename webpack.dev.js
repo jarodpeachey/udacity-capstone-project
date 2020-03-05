@@ -19,6 +19,18 @@ module.exports = {
         test: /\.scss$/,
         use: ['style-loader', 'css-loader', 'sass-loader'],
       },
+      {
+        test: /\.(png|jp(e*)g|svg|eot|woff|ttf)$/,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              publicPath: '/',
+              name: 'img/[name].[ext]',
+            },
+          },
+        ],
+      },
     ],
   },
   plugins: [
