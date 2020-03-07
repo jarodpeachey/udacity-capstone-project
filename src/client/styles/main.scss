@@ -41,24 +41,26 @@ body {
 
 #header {
   z-index: 99999999999;
-  background: #db5323;
-  backdrop-filter: blur(6px);
+  background: transparent;
+  // backdrop-filter: blur(6px);
   height: 58px;
   position: fixed;
   top: 0;
   width: 100%;
   left: 0;
+  padding-top: 48px;
   .container {
     display: flex;
     align-items: center;
     justify-content: space-between;
     height: 100%;
-    min-width: 85% !important;
+    min-width: 95% !important;
   }
   .site-title {
-    font-size: 36px !important;
+    font-size: 52px !important;
     color: white !important;
     margin: 0 !important;
+    font-weight: 600;
   }
   .menu {
     list-style: none;
@@ -66,64 +68,71 @@ body {
     height: 100%;
     display: flex;
     align-items: center;
+    position: relative;
+    top: 6px;
     .menu-item {
       width: auto;
       height: 100%;
       display: flex;
       align-items: center;
+      margin: 0 8px;
       a {
-        font-size: 16px;
+        font-size: 26px;
         color: white;
         font-weight: 500;
         text-decoration: none;
         padding: 8px;
         margin: 0;
       }
+      &:hover a {
+        color: #36dfd6;
+      }
     }
   }
 }
 
 #hero {
-  height: 70vh;
+  height: 100vh;
   display: flex;
   flex-direction: column;
+  position: relative;
   align-items: center;
   justify-content: center;
   text-align: center;
-  background-image: url('../images/travel.jpg');
-  background-position: left;
-  background-attachment: fixed;
-  background-origin: unset;
-  background-position-x: calc(-5vw);
-  @media (min-width: 576px) {
-    background-position-x: calc(5vw);
+  background: linear-gradient(#5bbab6, #96e9e5);
+  z-index: -1;
+  .container {
+    min-width: 85%;
   }
-  @media (min-width: 769px) {
-    background-position-x: calc(20vw);
+  img {
+    position: absolute;
+    width: 500px;
+    right: 0;
   }
-  // background-position-y: calc(-25vw);
-  // background-size: 350%;
 }
 
 .hero-title {
+  z-index: 99;
   color: white;
-  font-size: 84px;
-  font-family: 'Oswald', sans-serif;
+  font-size: 82px;
+  font-family: 'Arial', sans-serif;
   text-align: left;
-  text-shadow: 3px 3px #e4d12c;
+  // text-shadow: 3px 3px #e4d12c;
   margin-bottom: 16px;
+  position: relative;
+  max-width: 725px;
+  border-bottom: 3px solid #fabd0c;
 }
 
 .hero-subtitle {
-  // color: white;
+  color: white;
+  z-index: 99;
   font-size: 22px;
   text-align: left;
   font-weight: bold;
   // backdrop-filter: blur(6px);
   padding: 16px;
-  background: #e4d12c;
   position: relative;
-  background-color: #e4d12c;
   color: white;
   max-width: 650px;
   line-height: 1.5em;
