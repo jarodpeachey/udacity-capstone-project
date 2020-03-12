@@ -3,9 +3,9 @@ import './styles/main.scss';
 /* Global Variables */
 let addEntryButton = document.getElementById('entry-button');
 let header = document.getElementById('header');
-let nameElement = document.getElementById('name');
+let startDateElement = document.getElementById('start-date');
+let endDateElement = document.getElementById('end-date');
 let zipElement = document.getElementById('zip');
-let feelingsElement = document.getElementById('feelings');
 let entrySection = document.getElementById('entry-section');
 let entriesElement = document.getElementById('entries');
 
@@ -31,9 +31,9 @@ addEntryButton.addEventListener('click', addEntry);
 async function addEntry(e) {
   e.preventDefault();
   if (
-    name.value == '' ||
     zipElement.value == '' ||
-    feelingsElement.value == ''
+    startDateElement.value == '' ||
+    endDateElement.value == ''
   ) {
     alert('Please fill in all the fields.');
   } else {
@@ -71,10 +71,18 @@ async function getWeatherData(city) {
 
   const requestData = await postData('/requestWeather', data);
 
-  const weatherData = await getData('/getWeather').then(
-    (res) => (weatherData = res),
-  );
+  const weatherData = {};
+  
+  await getData('/getWeather')
+    .then(res => {
+      console.log(res);
+      weatherData = res;
+    });
 
+  displayWeatherData(weatherData);
+}
+
+function displayWeatherData(weatherData) {
   console.log(weatherData);
 }
 

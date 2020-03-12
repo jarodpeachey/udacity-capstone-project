@@ -46,19 +46,28 @@
           <div class="card">
             <label for="zip">What's the zip code of where you're going?</label>
             <input type="text" id="zip" placeholder="Zip Code" />
-            <label for="start-date">When are you leaving?</label>
-            <input type="date" id="start-date" />
-            <label for="end-date">When are you getting back?</label>
-            <input type="date" id="end-date" />
+            <div class="row">
+              <div class="col col-6">
+                <label for="start-date">When are you leaving?</label>
+                <input type="date" id="start-date" />
+              </div>
+              <div class="col col-6">
+                <label for="end-date">When are you getting back?</label>
+                <input type="date" id="end-date" />
+              </div>
+            </div>
             <button id="entry-button" type="submit">Add Entry</button>
           </div>
         </div>
       </section>
       <!-- <section id= -->
       <div id="entry-section">
-        <div class="container">
-          <h1 class="title">Most Recent Entries</h1>
-          <div id="entries"></div>
+        <div class="container padding">
+          <h1 class="title">
+            <span>Most Recent Entries</span>
+          </h1>
+          <div id="entries">
+          </div>
         </div>
       </div>
     </div>
