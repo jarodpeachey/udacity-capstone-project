@@ -2,11 +2,20 @@ import './styles/main.scss';
 
 /* Global Variables */
 let addEntryButton = document.getElementById('entry-button');
+let header = document.getElementById('header');
 let nameElement = document.getElementById('name');
 let zipElement = document.getElementById('zip');
 let feelingsElement = document.getElementById('feelings');
 let entrySection = document.getElementById('entry-section');
 let entriesElement = document.getElementById('entries');
+
+document.addEventListener('scroll', () => {
+  if (window.scrollY > 10) {
+    header.classList.add('scrolled');
+  } else {
+    header.classList.remove('scrolled');
+  }
+});
 
 // API Key
 const apiKey = process.env.API_KEY;
