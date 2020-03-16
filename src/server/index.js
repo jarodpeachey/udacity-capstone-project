@@ -8,7 +8,7 @@ const fetch = require('node-fetch');
 // Empty data object
 projectData = {
   entries: [],
-  currentWeatherObject: {},
+  currentWeatherData: [],
 };
 
 // Start up an instance of app
@@ -37,21 +37,39 @@ app.post('/add', postData);
 app.get('/data', sendData);
 
 async function requestWeather(request, response) {
+  console.log(request.body.dates);
+
   let apiResponse;
 
-  await fetch(
-    `https://api.darksky.net/forecast/${process.env.DARK_SKY_KEY}/${request.body.lat}, ${request.body.lng}`,
-  ).then((res) => (apiResponse = res));
+  let weatherRequests = [];
+  // let allWeatherData = [];
 
-  const jsonResponse = await apiResponse.json();
+  request.body.dates.forEach((date) => {
+    weatherRequests.push(
+      new Promise((resolve, reject) => {
+        fetch(
+          `https://api.darksky.net/forecast/${process.env.DARK_SKY_KEY}/${request.body.lat},${request.body.lng},${date}`,
+        )
+          .then((res) => res.json())
+          .then((data) => resolve(data));
+      }),
+    );
 
-  projectData.currentWeatherObject = jsonResponse;
+    Promise.all(weatherRequests).then((allWeatherData) => {
+      projectData.currentWeatherData = allWeatherData;
+
+      console.log(allWeatherData);
+    });
+  });
+
+  // console.log(projectData.currentWeatherData);
 
   response.send({ success: true });
 }
 
 function getWeather(request, response) {
-  response.send(projectData.currentWeatherObject);
+  console.log(projectData.currentWeatherData)
+  response.send(projectData.currentWeatherData);
 }
 
 // Set up functions for HTTP requests

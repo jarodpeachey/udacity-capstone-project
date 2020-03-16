@@ -1,4 +1,5 @@
 import './styles/main.scss';
+import { getDates } from './js/getDates';
 
 /* Global Variables */
 let addEntryButton = document.getElementById('entry-button');
@@ -41,9 +42,9 @@ async function addEntry(e) {
   }
 }
 
-// Create a new date instance dynamically with JS
-let d = new Date();
-let newDate = d.getMonth() + 1 + '/' + d.getDate() + '/' + d.getFullYear();
+// // Create a new date instance dynamically with JS
+// let d = new Date();
+// let newDate = d.getMonth() + 1 + '/' + d.getDate() + '/' + d.getFullYear();
 
 async function getCityLocation(zipCode) {
   let response;
@@ -58,26 +59,45 @@ async function getCityLocation(zipCode) {
 
   const city = jsonResponse.postalCodes[0];
 
-  getWeatherData(city);
+  const startTime = new Date(startDateElement.value);
+  const endTime = new Date(endDateElement.value);
+
+  const allDates = getDates(startTime, endTime);
+
+  const request = await requestWeatherData(city, allDates).then(
+    (res) => (response = res),
+  );
+
+  console.log('Requesting data from api: ', response);
+
+  if (response.success) {
+    getWeatherData();
+  }
 }
 
-async function getWeatherData(city) {
+async function requestWeatherData(city, dates) {
   let response;
 
   const data = {
     ...city,
+    dates,
     key: process.env.DARK_SKY_KEY,
   };
 
-  const requestData = await postData('/requestWeather', data);
+  const requestData = await postData('/requestWeather', data).then(
+    (res) => (response = res),
+  );
 
-  const weatherData = {};
-  
-  await getData('/getWeather')
-    .then(res => {
-      console.log(res);
-      weatherData = res;
-    });
+  return response;
+}
+
+async function getWeatherData() {
+  const weatherData = null;
+
+  await getData('/getWeather').then((res) => {
+    console.log(res);
+    weatherData = res;
+  });
 
   displayWeatherData(weatherData);
 }
