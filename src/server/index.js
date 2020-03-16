@@ -6,10 +6,7 @@ const bodyParser = require('body-parser');
 const fetch = require('node-fetch');
 
 // Empty data object
-projectData = {
-  entries: [],
-  currentWeatherData: [],
-};
+projectData = {};
 
 // Start up an instance of app
 const app = express();
@@ -37,10 +34,6 @@ app.post('/add', postData);
 app.get('/data', sendData);
 
 async function requestWeather(request, response) {
-  console.log(request.body.dates);
-
-  let apiResponse;
-
   let weatherRequests = [];
   // let allWeatherData = [];
 
@@ -54,21 +47,17 @@ async function requestWeather(request, response) {
           .then((data) => resolve(data));
       }),
     );
-
-    Promise.all(weatherRequests).then((allWeatherData) => {
-      projectData.currentWeatherData = allWeatherData;
-
-      console.log(allWeatherData);
-    });
   });
 
-  // console.log(projectData.currentWeatherData);
+  const data = await Promise.all(weatherRequests);
+
+  projectData.currentWeatherData = data;
 
   response.send({ success: true });
 }
 
 function getWeather(request, response) {
-  console.log(projectData.currentWeatherData)
+  console.log('Line 69: projectData: ', projectData);
   response.send(projectData.currentWeatherData);
 }
 
