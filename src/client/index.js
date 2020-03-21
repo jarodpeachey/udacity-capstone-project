@@ -1,5 +1,5 @@
 import './styles/main.scss';
-import { getDates } from './js/getDates';
+import { getAllDates } from './js/getDates';
 import {
   addEntryButton,
   header,
@@ -47,7 +47,7 @@ async function getCityLocation(zipCode) {
   const startTime = new Date(startDateElement.value);
   const endTime = new Date(endDateElement.value);
 
-  const allDates = getDates(startTime, endTime);
+  const allDates = getAllDates(startTime, endTime);
 
   const request = await requestWeatherData(city, allDates).then(
     (res) => (response = res),
@@ -67,9 +67,7 @@ async function requestWeatherData(city, dates) {
     key: process.env.DARK_SKY_KEY,
   };
 
-  await postData('/requestWeather', data).then(
-    (res) => (response = res),
-  );
+  await postData('/requestWeather', data).then((res) => (response = res));
 
   return response;
 }

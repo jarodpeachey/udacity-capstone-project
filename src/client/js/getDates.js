@@ -1,4 +1,4 @@
-export const getDates = (startDate, endDate) => {
+export const getAllDates = (startDate, endDate) => {
   console.log('Start: ', startDate);
   console.log('End: ', endDate);
 
