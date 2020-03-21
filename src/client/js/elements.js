@@ -6,7 +6,7 @@ let zipElement = document.getElementById('zip');
 let entrySection = document.getElementById('entry-section');
 let entriesElement = document.getElementById('entries');
 
-export default elements = {
+export {
   addEntryButton,
   header,
   startDateElement,

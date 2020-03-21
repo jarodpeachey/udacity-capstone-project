@@ -1,14 +1,6 @@
 import './styles/main.scss';
 import { getDates } from './js/getDates';
-import elements from './js/elements';
-import eventListeners from './js/eventListeners';
-
-// Load Event Listeners
-eventListeners();
-addEntryButton.addEventListener('click', addEntry);
-
-// Element Variables
-const {
+import {
   addEntryButton,
   header,
   startDateElement,
@@ -16,7 +8,12 @@ const {
   zipElement,
   entrySection,
   entriesElement,
-} = elements;
+} from './js/elements';
+import eventListeners from './js/eventListeners';
+
+// Load Event Listeners
+eventListeners();
+addEntryButton.addEventListener('click', addEntry);
 
 // Request URL
 const locationURL =
@@ -32,15 +29,9 @@ async function addEntry(e) {
   ) {
     alert('Please fill in all the fields.');
   } else {
-    const city = await getCityLocation(zipElement.value);
-
-    getWeatherData(city);
+    getCityLocation(zipElement.value);
   }
 }
-
-// // Create a new date instance dynamically with JS
-// let d = new Date();
-// let newDate = d.getMonth() + 1 + '/' + d.getDate() + '/' + d.getFullYear();
 
 async function getCityLocation(zipCode) {
   let response;
@@ -53,7 +44,18 @@ async function getCityLocation(zipCode) {
 
   const city = jsonResponse.postalCodes[0];
 
-  return city;
+  const startTime = new Date(startDateElement.value);
+  const endTime = new Date(endDateElement.value);
+
+  const allDates = getDates(startTime, endTime);
+
+  const request = await requestWeatherData(city, allDates).then(
+    (res) => (response = res),
+  );
+
+  if (response.success) {
+    getWeatherData();
+  }
 }
 
 async function requestWeatherData(city, dates) {
@@ -65,7 +67,7 @@ async function requestWeatherData(city, dates) {
     key: process.env.DARK_SKY_KEY,
   };
 
-  const requestData = await postData('/requestWeather', data).then(
+  await postData('/requestWeather', data).then(
     (res) => (response = res),
   );
 
@@ -73,22 +75,9 @@ async function requestWeatherData(city, dates) {
 }
 
 async function getWeatherData() {
-  const startTime = new Date(startDateElement.value);
-  const endTime = new Date(endDateElement.value);
-
-  const allDates = getDates(startTime, endTime);
-
-  const request = await requestWeatherData(city, allDates).then(
-    (res) => (response = res),
-  );
-
-  if (response.success) {
-    const weatherData = null;
-
-    await getData('/getWeather').then((res) => {
-      displayWeatherData(res);
-    });
-  }
+  await getData('/getWeather').then((res) => {
+    displayWeatherData(res);
+  });
 }
 
 function displayWeatherData(data) {
@@ -102,11 +91,13 @@ function displayWeatherData(data) {
     const firstDay = weatherArray[0];
     const secondDay = weatherArray[weatherArray.length - 1];
 
+    // Get first data
     const dateOne = `${new Date(firstDay.date * 1000).getMonth() +
       1}/${new Date(firstDay.date * 1000).getDate()}/${new Date(
       firstDay.date * 1000,
     ).getFullYear()}`;
 
+    // Get second date
     const dateTwo = `${new Date(secondDay.date * 1000).getMonth() +
       1}/${new Date(secondDay.date * 1000).getDate()}/${new Date(
       secondDay.date * 1000,
@@ -114,6 +105,7 @@ function displayWeatherData(data) {
 
     let entriesHTML = '<span>';
 
+    // Loop through weather and add new entry
     weatherArray.map((day) => {
       entriesHTML += `<div class='entry-day'>
               <div class='flex'>
@@ -189,43 +181,4 @@ async function getData(url) {
   let responseData = await result.json();
 
   return responseData;
-}
-
-function displayResults(data) {
-  const entries = data.entries;
-  const { name, date, feeling, zip, temp } = entries[entries.length - 1];
-
-  const wrapper = document.createElement('div');
-  const flex = document.createElement('div');
-  const textWrapper = document.createElement('div');
-  const nameElement = document.createElement('em');
-  const dateElement = document.createElement('span');
-  const tempElement = document.createElement('div');
-  const tempIndicator = document.createElement('span');
-  const feelingsElement = document.createElement('p');
-
-  wrapper.classList.add('entry-card');
-  flex.classList.add('entry-flex');
-  nameElement.classList.add('entry-name');
-  dateElement.classList.add('entry-date');
-  tempElement.classList.add('entry-temp');
-  tempIndicator.classList.add('entry-temp-indicator');
-  textWrapper.classList.add('entry-feelings');
-
-  nameElement.innerText = `- ${name}`;
-  dateElement.innerText = date;
-  feelingsElement.innerText = feeling;
-  tempIndicator.innerText = '(F)';
-  tempElement.innerText = `${temp}°`;
-  tempElement.appendChild(tempIndicator);
-
-  flex.appendChild(tempElement);
-  flex.appendChild(dateElement);
-  textWrapper.appendChild(feelingsElement);
-  textWrapper.appendChild(nameElement);
-  wrapper.appendChild(flex);
-  wrapper.appendChild(textWrapper);
-
-  entriesElement.appendChild(wrapper);
-  entrySection.style.display = 'block';
 }
