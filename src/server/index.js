@@ -6,7 +6,9 @@ const bodyParser = require('body-parser');
 const fetch = require('node-fetch');
 
 // Empty data object
-projectData = {};
+projectData = {
+  entries: [],
+};
 
 // Start up an instance of app
 const app = express();
@@ -28,12 +30,12 @@ const server = app.listen(port, () => {
 });
 
 // Set up HTTP request routes
-app.post('/requestWeather', requestWeather);
+app.post('/requestWeather', requestWeatherAndImage);
 app.get('/getWeather', getWeather);
 app.post('/add', postData);
 app.get('/data', sendData);
 
-async function requestWeather(request, response) {
+async function requestWeatherAndImage(request, response) {
   let weatherRequests = [];
   // let allWeatherData = [];
 
@@ -44,26 +46,53 @@ async function requestWeather(request, response) {
           `https://api.darksky.net/forecast/${process.env.DARK_SKY_KEY}/${request.body.lat},${request.body.lng},${date}`,
         )
           .then((res) => res.json())
-          .then((data) => resolve(data));
+          .then((data) =>
+            resolve({
+              date: date,
+              ...data,
+            }),
+          );
       }),
     );
   });
 
-  const data = await Promise.all(weatherRequests);
+  const weatherData = await Promise.all(weatherRequests);
 
-  projectData.currentWeatherData = data;
+  const imageData = await new Promise((resolve, reject) => {
+    fetch(
+      `http://pixabay.com/api/?key=15677514-092f8c69534bf8a323160addc&q=${request.body.placeName}`,
+    )
+      .then((res) => res.json())
+      .then((imageData) => {
+        resolve({
+          image: { ...imageData },
+        });
+      });
+  });
+
+  const newEntry = {
+    location: request.body.placeName,
+    weather: {
+      ...weatherData,
+    },
+    ...imageData,
+  };
+
+  projectData = {
+    entries: [...projectData.entries, newEntry],
+  };
 
   response.send({ success: true });
 }
 
 function getWeather(request, response) {
-  console.log('Line 69: projectData: ', projectData);
-  response.send(projectData.currentWeatherData);
+  console.log('Line 69: projectData: ', projectData.entries);
+  response.send(projectData.entries);
 }
 
 // Set up functions for HTTP requests
 function sendData(request, response) {
-  response.send(projectData);
+  response.send(projectData.entries);
 }
 
 function postData(request, response) {

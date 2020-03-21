@@ -1,32 +1,26 @@
 import './styles/main.scss';
 import { getDates } from './js/getDates';
+import elements from './js/elements';
+import eventListeners from './js/eventListeners';
 
-/* Global Variables */
-let addEntryButton = document.getElementById('entry-button');
-let header = document.getElementById('header');
-let startDateElement = document.getElementById('start-date');
-let endDateElement = document.getElementById('end-date');
-let zipElement = document.getElementById('zip');
-let entrySection = document.getElementById('entry-section');
-let entriesElement = document.getElementById('entries');
+// Load Event Listeners
+eventListeners();
+addEntryButton.addEventListener('click', addEntry);
 
-document.addEventListener('scroll', () => {
-  if (window.scrollY > 10) {
-    header.classList.add('scrolled');
-  } else {
-    header.classList.remove('scrolled');
-  }
-});
-
-// API Key
-const apiKey = process.env.API_KEY;
+// Element Variables
+const {
+  addEntryButton,
+  header,
+  startDateElement,
+  endDateElement,
+  zipElement,
+  entrySection,
+  entriesElement,
+} = elements;
 
 // Request URL
 const locationURL =
   'http://api.geonames.org/postalCodeSearchJSON?username=jarodpeachey';
-
-// Event Listener
-addEntryButton.addEventListener('click', addEntry);
 
 // Add Entry
 async function addEntry(e) {
@@ -38,7 +32,9 @@ async function addEntry(e) {
   ) {
     alert('Please fill in all the fields.');
   } else {
-    getCityLocation(zipElement.value);
+    const city = await getCityLocation(zipElement.value);
+
+    getWeatherData(city);
   }
 }
 
@@ -55,24 +51,9 @@ async function getCityLocation(zipCode) {
 
   const jsonResponse = await response.json();
 
-  console.log(jsonResponse);
-
   const city = jsonResponse.postalCodes[0];
 
-  const startTime = new Date(startDateElement.value);
-  const endTime = new Date(endDateElement.value);
-
-  const allDates = getDates(startTime, endTime);
-
-  const request = await requestWeatherData(city, allDates).then(
-    (res) => (response = res),
-  );
-
-  console.log('Requesting data from api: ', response);
-
-  if (response.success) {
-    getWeatherData();
-  }
+  return city;
 }
 
 async function requestWeatherData(city, dates) {
@@ -92,18 +73,95 @@ async function requestWeatherData(city, dates) {
 }
 
 async function getWeatherData() {
-  const weatherData = null;
+  const startTime = new Date(startDateElement.value);
+  const endTime = new Date(endDateElement.value);
 
-  await getData('/getWeather').then((res) => {
-    console.log(res);
-    weatherData = res;
-  });
+  const allDates = getDates(startTime, endTime);
 
-  displayWeatherData(weatherData);
+  const request = await requestWeatherData(city, allDates).then(
+    (res) => (response = res),
+  );
+
+  if (response.success) {
+    const weatherData = null;
+
+    await getData('/getWeather').then((res) => {
+      displayWeatherData(res);
+    });
+  }
 }
 
-function displayWeatherData(weatherData) {
-  console.log(weatherData);
+function displayWeatherData(data) {
+  entrySection.classList.add('show');
+
+  entriesElement.innerHTML = '';
+
+  data.map((item) => {
+    const weatherArray = Object.values(item.weather);
+
+    const firstDay = weatherArray[0];
+    const secondDay = weatherArray[weatherArray.length - 1];
+
+    const dateOne = `${new Date(firstDay.date * 1000).getMonth() +
+      1}/${new Date(firstDay.date * 1000).getDate()}/${new Date(
+      firstDay.date * 1000,
+    ).getFullYear()}`;
+
+    const dateTwo = `${new Date(secondDay.date * 1000).getMonth() +
+      1}/${new Date(secondDay.date * 1000).getDate()}/${new Date(
+      secondDay.date * 1000,
+    ).getFullYear()}`;
+
+    let entriesHTML = '<span>';
+
+    weatherArray.map((day) => {
+      entriesHTML += `<div class='entry-day'>
+              <div class='flex'>
+                <span class='weather-day'>
+                  ${new Date(day.date * 1000).toLocaleString('default', {
+                    weekday: 'short',
+                    month: 'short',
+                    day: 'numeric',
+                  })}
+                </span>
+                <span class='weather-temp'>
+                  ${day.daily.data[0].temperatureHigh}°
+                </span>
+              </div>
+              <span class='weather-icon'>
+                ${day.daily.data[0].summary}
+              </span>
+            </div>`;
+    });
+
+    entriesHTML += '</span>';
+
+    const newEntry = `
+    <div class="entry">
+      <img class="entry-image" src="${
+        item.image.hits[0]
+          ? item.image.hits[0].webformatURL
+          : 'https://images.pexels.com/photos/122400/pexels-photo-122400.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500'
+      }" />
+      <div class="entry-flex">
+        <div>
+          <h1 class="entry-name">${item.location}</h1>
+          <span class="entry-info">${dateOne} - ${dateTwo}</span>
+        </div>
+        <div class="entry-icon">
+          <span class="entry-info">
+            ${firstDay.daily.data[0].summary}
+          </span>
+        </div>
+      </div>
+      <div class="entry-weather">
+        ${entriesHTML}
+      </div>
+    </div>
+  `;
+
+    entriesElement.innerHTML += newEntry;
+  });
 }
 
 async function postData(url, data) {
