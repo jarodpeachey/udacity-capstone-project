@@ -14,7 +14,7 @@ projectData = {
 const app = express();
 
 /* Middleware*/
-//Here we are configuring express to use body-parser as middle-ware, as well as cors
+// Here we are configuring express to use body-parser as middle-ware, as well as cors
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors());
@@ -79,7 +79,7 @@ async function requestWeatherAndImage(request, response) {
   };
 
   projectData = {
-    entries: [...projectData.entries, newEntry],
+    entries: [newEntry, ...projectData.entries],
   };
 
   response.send({ success: true });
@@ -98,7 +98,7 @@ function sendData(request, response) {
 function postData(request, response) {
   newEntry = {
     date: request.body.date,
-    zip: request.body.zip,
+    location: request.body.location,
     feeling: request.body.feelings,
     temp: ((request.body.temp - 273.15) * (9 / 5) + 32).toFixed(), // Convert to F°
     name: request.body.name,
@@ -109,7 +109,7 @@ function postData(request, response) {
   };
 
   projectData = {
-    entries: [...projectData.entries, newEntry],
+    entries: [newEntry, ...projectData.entries],
   };
 
   response.send(projectData);

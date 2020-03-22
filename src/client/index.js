@@ -5,7 +5,7 @@ import {
   header,
   startDateElement,
   endDateElement,
-  zipElement,
+  locationElement,
   entrySection,
   entriesElement,
 } from './js/elements';
@@ -23,20 +23,20 @@ const locationURL =
 async function addEntry(e) {
   e.preventDefault();
   if (
-    zipElement.value == '' ||
+    locationElement.value == '' ||
     startDateElement.value == '' ||
     endDateElement.value == ''
   ) {
     alert('Please fill in all the fields.');
   } else {
-    getCityLocation(zipElement.value);
+    getCityLocation(locationElement.value);
   }
 }
 
-async function getCityLocation(zipCode) {
+async function getCityLocation(location) {
   let response;
 
-  await fetch(`${locationURL}&postalcode=${zipCode}&countryCode=US`).then(
+  await fetch(`${locationURL}&placename=${location}&countryCode=US`).then(
     (res) => (response = res),
   );
 
