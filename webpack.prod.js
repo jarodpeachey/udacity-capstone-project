@@ -1,7 +1,7 @@
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
-const { GenerateSW } = require('workbox-webpack-plugin');
+const workboxPlugin = require('workbox-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
@@ -43,6 +43,10 @@ module.exports = {
       filename: './index.html',
     }),
     new CopyPlugin([{ from: 'src/client/images', to: 'images/' }]),
-    new GenerateSW(),
+    new workboxPlugin.GenerateSW({
+      swDest: 'sw.js',
+      clientsClaim: true,
+      skipWaiting: true,
+    }),
   ],
 };

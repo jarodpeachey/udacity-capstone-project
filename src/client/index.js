@@ -11,6 +11,19 @@ import {
 } from './js/elements';
 import eventListeners from './js/eventListeners';
 
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker
+      .register('/sw.js')
+      .then((registration) => {
+        console.log('SW registered: ', registration);
+      })
+      .catch((registrationError) => {
+        console.log('SW registration failed: ', registrationError);
+      });
+  });
+}
+
 // Load Event Listeners
 eventListeners();
 addEntryButton.addEventListener('click', addEntry);

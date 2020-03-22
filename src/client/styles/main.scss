@@ -5,7 +5,7 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-html {
+html, body {
   overflow-x: hidden;
 }
 
@@ -19,7 +19,7 @@ html {
 
 .container {
   margin: 0 auto;
-  width: 95%;
+  width: 95vw;
   &.padding {
     padding: 64px 0;
   }
@@ -28,21 +28,21 @@ html {
 @media (min-width: 540px) {
   .container {
     margin: 0 auto;
-    width: 90%;
+    width: 90vw;
   }
 }
 
 @media (min-width: 769px) {
   .container {
     margin: 0 auto;
-    width: 85%;
+    width: 85vw;
   }
 }
 
 @media (min-width: 1024px) {
   .container {
     margin: 0 auto;
-    width: 80%;
+    width: 80vw;
     max-width: 960px;
   }
 }
@@ -55,7 +55,7 @@ html {
   height: 58px;
   position: fixed;
   top: 0;
-  width: 100%;
+  width: 100vw;
   left: 0;
   padding-top: 48px;
   @media (max-width: 676px) {
