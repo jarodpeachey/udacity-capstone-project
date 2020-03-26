@@ -7,9 +7,9 @@ const CopyPlugin = require('copy-webpack-plugin');
 module.exports = {
   entry: './src/client/index.js',
   output: {
-    path: path.join(__dirname, 'public'),
-    filename: 'main.js',
+    path: __dirname,
     publicPath: '/',
+    filename: 'bundle.js',
   },
   mode: 'production',
   module: {
@@ -42,7 +42,10 @@ module.exports = {
       template: './src/client/views/index.html',
       filename: './index.html',
     }),
-    new CopyPlugin([{ from: 'src/client/images', to: 'images/' }]),
+    new CopyPlugin([
+      { from: 'src/client/images', to: 'images/' },
+      { from: 'src/client/js', to: 'js/' },
+    ]),
     new workboxPlugin.GenerateSW({
       swDest: 'sw.js',
       clientsClaim: true,

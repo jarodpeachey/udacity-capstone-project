@@ -32,9 +32,10 @@
   },
   "scripts": {
     "test": "jest",
-    "start": "npm run build && node src/server .",
     "build": "webpack --config webpack.prod.js",
-    "dev": "webpack-dev-server  --config webpack.dev.js --open"
+    "dev": "webpack-dev-server  --config webpack.dev.js --open",
+    "start": "node .",
+    "heroku-postbuild": "webpack -p"
   },
   "repository": {
     "type": "git",
